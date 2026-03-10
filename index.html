@@ -1,192 +1,210 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>death store - Caixa da Sorte</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Death Store Raspadinha</title>
 
 <style>
-body {
-  background: radial-gradient(circle at top, #2a003d, #0b0014);
-  color: #fff;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: column;
-  text-align: center;
-  overflow: hidden;
+
+body{
+margin:0;
+font-family:Arial;
+background:linear-gradient(180deg,#2b0050,#0d001a);
+color:white;
+text-align:center;
 }
 
-h1 {
-  font-size: 40px;
-  color: #b84cff;
-  text-shadow: 0 0 20px #7a00ff;
+h1{
+margin-top:30px;
 }
 
-input {
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
-  width: 300px;
-  text-align: center;
+.grid{
+margin-top:20px;
+display:grid;
+grid-template-columns:repeat(3,100px);
+gap:15px;
+justify-content:center;
 }
 
-button {
-  margin-top: 15px;
-  background: linear-gradient(135deg, #7a00ff, #b84cff);
-  border: none;
-  padding: 14px 40px;
-  font-size: 20px;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
+.card{
+position:relative;
+width:100px;
+height:100px;
+background:#111;
+border-radius:10px;
+overflow:hidden;
 }
 
-#abrir {
-  display: none;
+.value{
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+font-size:18px;
 }
 
-.caixa {
-  width: 220px;
-  height: 220px;
-  margin-top: 30px;
-  background: linear-gradient(135deg, #7a00ff, #3a0066);
-  border-radius: 20px;
-  box-shadow: 0 0 40px #9d4cff;
-  display: none;
-  position: relative;
+canvas{
+position:absolute;
+top:0;
+left:0;
 }
 
-.caixa.chacoalhar {
-  animation: shake 0.4s infinite;
+button{
+padding:10px 15px;
+border:none;
+border-radius:6px;
+background:#7a00ff;
+color:white;
+font-weight:bold;
+margin-top:20px;
 }
 
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-10px); }
-  50% { transform: translateX(10px); }
-  75% { transform: translateX(-10px); }
-  100% { transform: translateX(0); }
+#result{
+margin-top:20px;
+font-size:20px;
 }
 
-.fitinha {
-  position: absolute;
-  width: 8px;
-  height: 40px;
-  background: gold;
-  top: -50px;
-  animation: cair 1.5s linear forwards;
-}
-
-@keyframes cair {
-  to {
-    transform: translateY(300px) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-#resultado {
-  margin-top: 25px;
-  font-size: 26px;
-  color: #e6ccff;
-  font-weight: bold;
-}
 </style>
 </head>
-
 <body>
 
-<h1>🍀 death store 🍀</h1>
-<p>Digite sua key válida para desbloquear a Caixa da Sorte</p>
+<h1>DEATH STORE RASPADINHA</h1>
 
-<input id="keyInput" placeholder="Digite sua key">
-<button onclick="verificarKey()">Verificar Key</button>
+<button onclick="startGame()">Jogar</button>
 
-<button id="abrir" onclick="abrirCaixa()">🎁 Abrir Caixa</button>
+<div class="grid" id="grid"></div>
 
-<div class="caixa" id="caixa"></div>
-<div id="resultado"></div>
+<p id="result"></p>
 
 <script>
-const PERMANENT_KEY = "DEATH-PERMA-044";
 
-const SINGLE_USE_KEYS = [
-  "PREMIUMM-06P3M"
+const premios=[
+"1M 💎",
+"1.2M 💎",
+"1.3M 💎",
+"1.4M 💎",
+"1.5M 💎",
+"8M 💎",
+"17M 💎",
+"33M 💎",
+"45M 💎"
 ];
 
-const premios = [
-"5.000.900 de gemas 💎",
-"5.100.300 de gemas 💎",
-"5.050.001 de Gemas 💎"
-];
+let scratched=false;
+let valores=[];
 
-let caixaJaAberta = false;
+function sortearPremio(){
 
-function verificarKey() {
-  const key = keyInput.value.trim();
+return premios[Math.floor(Math.random()*premios.length)];
 
-  if (key === PERMANENT_KEY) {
-    resultado.innerText = "✅ Key permanente aceita! Abra sua caixa.";
-    abrir.style.display = "inline-block";
-    caixaJaAberta = false;
-    abrir.disabled = false;
-    return;
-  }
-
-  if (!SINGLE_USE_KEYS.includes(key)) {
-    resultado.innerText = "❌ Key inválida.";
-    return;
-  }
-
-  if (localStorage.getItem("used_" + key)) {
-    resultado.innerText = "❌ Essa key já foi usada.";
-    return;
-  }
-
-  resultado.innerText = "✅ Key válida! Abra sua caixa.";
-  abrir.style.display = "inline-block";
-  caixaJaAberta = false;
-  abrir.disabled = false;
 }
 
-function abrirCaixa() {
-  if (caixaJaAberta) {
-    resultado.innerText = "❌ Você já abriu essa caixa.";
-    return;
-  }
+function startGame(){
 
-  caixaJaAberta = true;
+const grid=document.getElementById("grid");
 
-  const caixa = document.getElementById("caixa");
-  caixa.style.display = "block";
-  caixa.classList.add("chacoalhar");
-  resultado.innerText = "";
-  abrir.disabled = true;
-  abrir.style.opacity = "0.6";
-  abrir.style.cursor = "not-allowed";
+grid.innerHTML="";
+scratched=false;
+valores=[];
+document.getElementById("result").innerText="";
 
-  for (let i = 0; i < 20; i++) {
-    const f = document.createElement("div");
-    f.className = "fitinha";
-    f.style.left = Math.random() * 220 + "px";
-    f.style.background = ["gold","violet","cyan","lime"][Math.floor(Math.random()*4)];
-    caixa.appendChild(f);
-    setTimeout(() => f.remove(), 1500);
-  }
+for(let i=0;i<9;i++){
 
-  setTimeout(() => {
-    caixa.classList.remove("chacoalhar");
-    const premio = premios[Math.floor(Math.random() * premios.length)];
-    resultado.innerText = "🎉 Parabéns! Você ganhou " + premio;
+valores.push(sortearPremio());
+createCard(i);
 
-    const key = keyInput.value.trim();
-    if (key !== PERMANENT_KEY) {
-      localStorage.setItem("used_" + key, "true");
-    }
-  }, 3000);
 }
+
+}
+
+function createCard(index){
+
+const card=document.createElement("div");
+card.className="card";
+
+const valueDiv=document.createElement("div");
+valueDiv.className="value";
+valueDiv.innerHTML=valores[index];
+
+const canvas=document.createElement("canvas");
+
+canvas.width=100;
+canvas.height=100;
+
+const ctx=canvas.getContext("2d");
+
+ctx.fillStyle="#999";
+ctx.fillRect(0,0,100,100);
+
+ctx.globalCompositeOperation="destination-out";
+
+let holding=false;
+
+function scratch(e){
+
+if(!holding || scratched) return;
+
+e.preventDefault();
+
+const rect=canvas.getBoundingClientRect();
+
+const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+
+ctx.beginPath();
+ctx.arc(x,y,18,0,Math.PI*2);
+ctx.fill();
+
+const pixels=ctx.getImageData(0,0,100,100).data;
+
+let count=0;
+
+for(let i=3;i<pixels.length;i+=40){
+
+if(pixels[i]===0) count++;
+
+}
+
+if(count>160){
+
+scratched=true;
+
+finishGame(index);
+
+}
+
+}
+
+canvas.addEventListener("mousedown",()=>holding=true);
+canvas.addEventListener("mouseup",()=>holding=false);
+canvas.addEventListener("mousemove",scratch);
+
+canvas.addEventListener("touchstart",()=>holding=true,{passive:false});
+canvas.addEventListener("touchend",()=>holding=false);
+canvas.addEventListener("touchmove",scratch,{passive:false});
+
+card.appendChild(valueDiv);
+card.appendChild(canvas);
+
+document.getElementById("grid").appendChild(card);
+
+}
+
+function finishGame(index){
+
+document.querySelectorAll("canvas").forEach(c=>{
+c.remove();
+});
+
+document.getElementById("result").innerHTML=
+"🎉 Você ganhou: <b>"+valores[index]+"</b>";
+
+}
+
 </script>
 
 </body>
